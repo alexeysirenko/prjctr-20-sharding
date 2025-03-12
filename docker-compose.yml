@@ -1,0 +1,88 @@
+services:
+  postgresql-b:
+    image: postgres:15-alpine
+    container_name: postgresql-b
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: books_db
+    volumes:
+      - pgdata-b:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - pg-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgresql-b1:
+    image: postgres:15-alpine
+    container_name: postgresql-b1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: books_db
+    volumes:
+      - pgdata-b1:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - pg-network
+    restart: unless-stopped
+    depends_on:
+      postgresql-b:
+        condition: service_healthy
+
+  postgresql-b2:
+    image: postgres:15-alpine
+    container_name: postgresql-b2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: books_db
+    volumes:
+      - pgdata-b2:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - pg-network
+    restart: unless-stopped
+    depends_on:
+      postgresql-b:
+        condition: service_healthy
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: app
+    environment:
+      DB_HOST: postgresql-b
+      DB_PORT: 5432
+      DB_NAME: books_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      REPLICA1_HOST: postgresql-b1
+      REPLICA1_PORT: 5432
+      REPLICA2_HOST: postgresql-b2
+      REPLICA2_PORT: 5432
+    volumes:
+      - ./app:/app
+    networks:
+      - pg-network
+    depends_on:
+      postgresql-b:
+        condition: service_healthy
+
+networks:
+  pg-network:
+    driver: bridge
+
+volumes:
+  pgdata-b:
+  pgdata-b1:
+  pgdata-b2:
