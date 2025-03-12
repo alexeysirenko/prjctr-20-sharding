@@ -17,8 +17,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-DB_HOST = os.environ.get('DB_HOST', 'localhost')
-DB_PORT = os.environ.get('DB_PORT', '5432')
+DB_HOST = os.environ.get('DB_HOST_1')
+DB_PORT = os.environ.get('DB_PORT')
 DB_NAME = os.environ.get('DB_NAME')
 DB_USER = os.environ.get('DB_USER')
 DB_PASSWORD = os.environ.get('DB_PASSWORD')
@@ -29,15 +29,11 @@ def generate_random_book():
     isbn = f"{random.randint(1000000000000, 9999999999999)}"
     
     return {
+        'category_id': random.randint(1, 100),
         'title': fake.catch_phrase(),
         'author': fake.name(),
         'isbn': isbn,
         'year': random.randint(1900, 2025),
-        'genre': random.choice(['Fiction', 'Fantasy', 'Horror']),
-        'publisher': fake.company(),
-        'pages': random.randint(50, 1200),
-        'language': random.choice(['English', 'Spanish', 'French']),
-        'description': fake.text(max_nb_chars=100)
     }
 
 def insert_books(num_books, batch_size=1000):
@@ -60,11 +56,11 @@ def insert_books(num_books, batch_size=1000):
             
             books_batch = [generate_random_book() for _ in range(current_batch_size)]
             
-            columns = ['title', 'author', 'isbn', 'year', 'genre', 'publisher', 'pages', 'language', 'description']
+            columns = ['category_id', 'title', 'author', 'isbn', 'year']
             values = [[book[column] for column in columns] for book in books_batch]
             
             query = f"""
-                INSERT INTO books (title, author, isbn, year, genre, publisher, pages, language, description)
+                INSERT INTO books (category_id, title, author, isbn, year)
                 VALUES %s
             """
             

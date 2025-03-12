@@ -61,7 +61,9 @@ services:
       dockerfile: Dockerfile
     container_name: app
     environment:
-      DB_HOST: postgresql-b
+      DB_HOST_1: postgresql-b
+      DB_HOST_2: postgresql-b1
+      DB_HOST_3: postgresql-b2
       DB_PORT: 5432
       DB_NAME: books_db
       DB_USER: postgres
