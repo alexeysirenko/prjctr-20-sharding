@@ -2,6 +2,6 @@
 
 ```
 docker compose up -d
-docker exec -it app /app/seed.py
-docker exec -it app /app/write_data.py
+docker exec -it app python seed.py
+docker exec -it app python write_data.py 100 --batch-size 20
 ```

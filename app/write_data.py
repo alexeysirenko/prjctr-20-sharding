@@ -33,14 +33,11 @@ def generate_random_book():
         'author': fake.name(),
         'isbn': isbn,
         'year': random.randint(1900, 2025),
-        'genre': random.choice(['Fiction', 'Non-fiction', 'Science Fiction', 
-                              'Mystery', 'Fantasy', 'Biography', 'History',
-                              'Romance', 'Thriller', 'Horror', 'Poetry']),
+        'genre': random.choice(['Fiction', 'Fantasy', 'Horror']),
         'publisher': fake.company(),
         'pages': random.randint(50, 1200),
-        'language': random.choice(['English', 'Spanish', 'French', 'German', 
-                                 'Chinese', 'Japanese', 'Russian', 'Arabic']),
-        'description': fake.text(max_nb_chars=500)
+        'language': random.choice(['English', 'Spanish', 'French']),
+        'description': fake.text(max_nb_chars=100)
     }
 
 def insert_books(num_books, batch_size=1000):
@@ -103,7 +100,7 @@ def insert_books(num_books, batch_size=1000):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Insert random books into the database')
-    parser.add_argument('--n', type=int, help='Number of books to insert')
+    parser.add_argument('num_books', type=int, help='Number of books to insert')
     parser.add_argument('--batch-size', type=int, default=1000, help='Batch size for insertion (default: 1000)')
     
     args = parser.parse_args()
