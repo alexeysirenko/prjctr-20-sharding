@@ -10,8 +10,6 @@ SELECT citus_add_node('postgresql-b3', 5432);
 SELECT * FROM citus_check_cluster_node_health();
 SELECT * FROM citus_get_active_worker_nodes();
 
-DROP TABLE IF EXISTS books;
-
 CREATE TABLE books (
     id SERIAL,
     category_id INTEGER NOT NULL,
