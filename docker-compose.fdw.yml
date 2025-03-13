@@ -7,11 +7,11 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: books_db
     volumes:
-      - pgdata-b:/var/lib/postgresql/data
+      - pgdata-fdw-b:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
-      - pg-network
+      - pg-network-fdw
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -27,11 +27,11 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: books_db
     volumes:
-      - pgdata-b1:/var/lib/postgresql/data
+      - pgdata-fdw-b1:/var/lib/postgresql/data
     ports:
       - "5433:5432"
     networks:
-      - pg-network
+      - pg-network-fdw
     restart: unless-stopped
     depends_on:
       postgresql-b:
@@ -45,11 +45,11 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: books_db
     volumes:
-      - pgdata-b2:/var/lib/postgresql/data
+      - pgdata-fdw-b2:/var/lib/postgresql/data
     ports:
       - "5434:5432"
     networks:
-      - pg-network
+      - pg-network-fdw
     restart: unless-stopped
     depends_on:
       postgresql-b:
@@ -62,29 +62,23 @@ services:
     container_name: app
     environment:
       DB_HOST_1: postgresql-b
-      DB_HOST_2: postgresql-b1
-      DB_HOST_3: postgresql-b2
       DB_PORT: 5432
       DB_NAME: books_db
       DB_USER: postgres
       DB_PASSWORD: postgres
-      REPLICA1_HOST: postgresql-b1
-      REPLICA1_PORT: 5432
-      REPLICA2_HOST: postgresql-b2
-      REPLICA2_PORT: 5432
     volumes:
       - ./app:/app
     networks:
-      - pg-network
+      - pg-network-fdw
     depends_on:
       postgresql-b:
         condition: service_healthy
 
 networks:
-  pg-network:
+  pg-network-fdw:
     driver: bridge
 
 volumes:
-  pgdata-b:
-  pgdata-b1:
-  pgdata-b2:
+  pgdata-fdw-b:
+  pgdata-fdw-b1:
+  pgdata-fdw-b2:
